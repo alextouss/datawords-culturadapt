@@ -8,7 +8,12 @@ interface UseAdaptationReturn {
   results: AdaptationResult[];
   phase: PipelinePhase;
   error: string | null;
-  run: (content: string, marketIds: string[]) => Promise<void>;
+  run: (
+    content: string,
+    marketIds: string[],
+    brandVoiceId?: string | null,
+    customGuidelines?: string
+  ) => Promise<void>;
   reset: () => void;
 }
 
@@ -23,7 +28,12 @@ export function useAdaptation(): UseAdaptationReturn {
     setError(null);
   }, []);
 
-  const run = useCallback(async (content: string, marketIds: string[]) => {
+  const run = useCallback(async (
+    content: string,
+    marketIds: string[],
+    brandVoiceId?: string | null,
+    customGuidelines?: string
+  ) => {
     setResults([]);
     setError(null);
     setPhase("analyzing");
@@ -32,7 +42,7 @@ export function useAdaptation(): UseAdaptationReturn {
       const response = await fetch("/api/adapt", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ content, marketIds }),
+        body: JSON.stringify({ content, marketIds, brandVoiceId, customGuidelines }),
       });
 
       if (!response.ok) {

@@ -4,29 +4,36 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { ContentInput } from "@/components/content-input";
+import { ImageUpload } from "@/components/image-upload";
 import { MarketSelector } from "@/components/market-selector";
+import { BrandVoiceSelector } from "@/components/brand-voice-selector";
 import { PipelineStatus } from "@/components/pipeline-status";
 import { ResultCard } from "@/components/result-card";
 import { useAdaptation } from "@/hooks/use-adaptation";
 import { samples } from "@/lib/samples";
+import { Textarea } from "@/components/ui/textarea";
 import { Globe, Sparkles, RotateCcw, ArrowRight } from "lucide-react";
 
 export default function Home() {
   const [content, setContent] = useState(samples[0].content);
+  const [activeSampleId, setActiveSampleId] = useState<string | null>(
+    samples[0].id
+  );
+  const [productImage, setProductImage] = useState<string | null>(samples[0].referenceImage);
   const [selectedMarkets, setSelectedMarkets] = useState<string[]>([
-    "fr",
+    "de",
     "jp",
     "br",
-    "sa",
-    "de",
   ]);
+  const [brandVoiceId, setBrandVoiceId] = useState<string | null>(null);
+  const [customGuidelines, setCustomGuidelines] = useState("");
   const { results, phase, error, run, reset } = useAdaptation();
 
   const isRunning = phase !== "idle" && phase !== "done";
 
   const handleAdapt = () => {
     if (!content.trim() || selectedMarkets.length === 0) return;
-    run(content, selectedMarkets);
+    run(content, selectedMarkets, brandVoiceId, customGuidelines);
   };
 
   const handleReset = () => {
@@ -76,8 +83,54 @@ export default function Home() {
         {/* Input Section */}
         <div className="space-y-6 rounded-xl border border-white/10 bg-white/[0.03] backdrop-blur-sm p-6">
           <ContentInput
-            value={content}
-            onChange={setContent}
+            activeSampleId={activeSampleId}
+            onSampleSelect={(sampleId) => {
+              setActiveSampleId(sampleId);
+              const sample = samples.find((s) => s.id === sampleId);
+              if (sample) {
+                setContent(sample.content);
+                setProductImage(sample.referenceImage);
+              }
+            }}
+            onCustomMode={() => {
+              setActiveSampleId(null);
+              setContent("");
+              setProductImage(null);
+            }}
+            disabled={isRunning}
+          />
+          <Separator className="bg-white/10" />
+          <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-4">
+            <div className="space-y-2">
+              <label className="text-xs font-medium uppercase tracking-[0.15em] text-purple-400">
+                Source Content
+              </label>
+              <Textarea
+                placeholder="Paste your marketing content here..."
+                value={content}
+                onChange={(e) => {
+                  setContent(e.target.value);
+                  setActiveSampleId(null);
+                }}
+                disabled={isRunning}
+                className="min-h-[200px] resize-y text-sm leading-relaxed bg-white/[0.03] border-white/10 focus:border-purple-500/50 focus:ring-purple-500/20 placeholder:text-muted-foreground/50"
+              />
+            </div>
+            <ImageUpload
+              imageUrl={productImage}
+              onImageChange={(url) => {
+                setProductImage(url);
+                if (url) setActiveSampleId(null);
+              }}
+              disabled={isRunning}
+            />
+          </div>
+          <Separator className="bg-white/10" />
+          <BrandVoiceSelector
+            selectedVoiceId={brandVoiceId}
+            customGuidelines={customGuidelines}
+            onVoiceChange={setBrandVoiceId}
+            onCustomGuidelinesChange={setCustomGuidelines}
             disabled={isRunning}
           />
           <Separator className="bg-white/10" />
@@ -136,20 +189,18 @@ export default function Home() {
             </h3>
             <div className="grid gap-4 md:grid-cols-2">
               {results.map((result, i) => (
-                <ResultCard key={result.marketId} result={result} index={i} />
+                <ResultCard
+                  key={result.marketId}
+                  result={result}
+                  index={i}
+                  productImageUrl={productImage}
+                  activeSampleId={activeSampleId}
+                />
               ))}
             </div>
           </div>
         )}
 
-        {/* Footer */}
-        <footer className="pt-8 pb-4 border-t border-white/10 text-center">
-          <p className="text-xs text-muted-foreground">
-            Built with Next.js, OpenAI GPT-5 mini, and Vercel AI SDK —{" "}
-            <span className="font-medium text-purple-400">CulturAdapt</span> by
-            Alexandre Toussaint
-          </p>
-        </footer>
       </main>
     </div>
   );

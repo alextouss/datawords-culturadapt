@@ -20,6 +20,12 @@ export const adaptationResultSchema = z.object({
   toneSummary: z
     .string()
     .describe("Brief description of the overall tone and approach used for this market"),
+  brandVoiceAlignment: z
+    .string()
+    .nullable()
+    .describe(
+      "How the brand voice was preserved in this adaptation, including any tension points between brand voice and cultural norms. Return null if no brand voice guidelines were provided."
+    ),
 });
 
 export type CulturalInsight = z.infer<typeof culturalInsightSchema>;

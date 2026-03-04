@@ -2,18 +2,29 @@ import { NextRequest, NextResponse } from "next/server";
 import { markets } from "@/lib/markets";
 import { adaptForMarket } from "@/lib/ai/adapt";
 import { AdaptationResult } from "@/lib/ai/schemas";
+import { brandVoices } from "@/lib/brand-voices";
 
 export const maxDuration = 60;
 
 export async function POST(req: NextRequest) {
-  const { content, marketIds } = (await req.json()) as {
-    content: string;
-    marketIds: string[];
-  };
+  const { content, marketIds, brandVoiceId, customGuidelines } =
+    (await req.json()) as {
+      content: string;
+      marketIds: string[];
+      brandVoiceId?: string | null;
+      customGuidelines?: string;
+    };
 
   if (!content || !marketIds?.length) {
     return NextResponse.json(
       { error: "Content and at least one market are required" },
+      { status: 400 }
+    );
+  }
+
+  if (marketIds.length > 3) {
+    return NextResponse.json(
+      { error: "Maximum of 3 markets per request" },
       { status: 400 }
     );
   }
@@ -24,13 +35,25 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "No valid markets selected" }, { status: 400 });
   }
 
+  // Resolve brand voice guidelines
+  let brandVoiceContext: string | undefined;
+  if (brandVoiceId) {
+    const preset = brandVoices.find((v) => v.id === brandVoiceId);
+    if (preset) brandVoiceContext = preset.guidelines;
+  }
+  if (customGuidelines?.trim()) {
+    brandVoiceContext = brandVoiceContext
+      ? `${brandVoiceContext}\n\nAdditional brand guidelines:\n${customGuidelines.trim()}`
+      : customGuidelines.trim();
+  }
+
   // Stream results as each market completes (NDJSON)
   const encoder = new TextEncoder();
   const stream = new ReadableStream({
     async start(controller) {
       const promises = selectedMarkets.map(async (market) => {
         try {
-          const result = await adaptForMarket(content, market);
+          const result = await adaptForMarket(content, market, brandVoiceContext);
           controller.enqueue(
             encoder.encode(JSON.stringify({ type: "result", data: result }) + "\n")
           );

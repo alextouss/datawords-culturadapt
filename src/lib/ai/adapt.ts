@@ -6,12 +6,13 @@ import { MarketProfile } from "../markets";
 
 export async function adaptForMarket(
   sourceContent: string,
-  market: MarketProfile
+  market: MarketProfile,
+  brandVoiceContext?: string
 ): Promise<AdaptationResult> {
   const { object } = await generateObject({
-    model: openai("gpt-5-mini"),
+    model: openai("gpt-4o-mini"),
     schema: adaptationResultSchema,
-    system: buildAdaptationPrompt(market),
+    system: buildAdaptationPrompt(market, brandVoiceContext),
     prompt: `Transcreate the following marketing content for the ${market.name} market:\n\n${sourceContent}`,
   });
 

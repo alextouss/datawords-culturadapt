@@ -3,6 +3,8 @@ export interface SampleContent {
   label: string;
   category: string;
   content: string;
+  hasVisuals: boolean;
+  referenceImage: string;
 }
 
 export const samples: SampleContent[] = [
@@ -10,6 +12,8 @@ export const samples: SampleContent[] = [
     id: "luxury-beauty",
     label: "Luxury Skincare",
     category: "Beauty & Cosmetics",
+    hasVisuals: true,
+    referenceImage: "/samples/luxury-beauty/fr.png",
     content: `Introducing Révitalift Pro-Retinol Night Serum — our most advanced anti-aging formula yet.
 
 Powered by 0.3% Pure Retinol and Hyaluronic Acid, this lightweight serum works overnight to visibly reduce wrinkles by up to 47% in just 4 weeks.
@@ -26,6 +30,8 @@ Shop now and get 20% off your first order. Your best skin starts tonight.`,
     id: "consumer-electronics",
     label: "Smart Home Device",
     category: "Consumer Electronics",
+    hasVisuals: true,
+    referenceImage: "/samples/consumer-electronics/fr.png",
     content: `Meet AirPure 360 — the smart air purifier that thinks ahead.
 
 Using real-time AI sensors, AirPure 360 detects pollutants, allergens, and VOCs before you even notice them. It automatically adjusts its 4-stage HEPA filtration to keep your home's air pristine.
@@ -42,6 +48,8 @@ Breathe easier. Live smarter. AirPure 360 — because the air you breathe matter
     id: "food-beverage",
     label: "Premium Chocolate",
     category: "Food & Beverage",
+    hasVisuals: true,
+    referenceImage: "/samples/food-beverage/fr.png",
     content: `Maison Noir — Single Origin Dark Chocolate, 72% Cacao
 
 Crafted from hand-selected cacao beans from the Tumaco region of Colombia, each bar tells a story of terroir, tradition, and uncompromising quality.

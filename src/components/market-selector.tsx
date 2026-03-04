@@ -2,7 +2,6 @@
 
 import { markets } from "@/lib/markets";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 
 interface MarketSelectorProps {
   selected: string[];
@@ -10,20 +9,16 @@ interface MarketSelectorProps {
   disabled?: boolean;
 }
 
+const MAX_MARKETS = 3;
+
 export function MarketSelector({ selected, onChange, disabled }: MarketSelectorProps) {
+  const atLimit = selected.length >= MAX_MARKETS;
+
   const toggle = (id: string) => {
     if (selected.includes(id)) {
       onChange(selected.filter((s) => s !== id));
-    } else {
+    } else if (!atLimit) {
       onChange([...selected, id]);
-    }
-  };
-
-  const selectAll = () => {
-    if (selected.length === markets.length) {
-      onChange([]);
-    } else {
-      onChange(markets.map((m) => m.id));
     }
   };
 
@@ -33,22 +28,16 @@ export function MarketSelector({ selected, onChange, disabled }: MarketSelectorP
         <label className="text-xs font-medium uppercase tracking-[0.15em] text-purple-400">
           Target Markets
         </label>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={selectAll}
-          disabled={disabled}
-          className="text-xs text-muted-foreground hover:text-purple-400 cursor-pointer"
-        >
-          {selected.length === markets.length ? "Deselect all" : "Select all"}
-        </Button>
+        <span className="text-xs text-muted-foreground">
+          {selected.length}/{MAX_MARKETS} selected
+        </span>
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
         {markets.map((market) => (
           <button
             key={market.id}
             onClick={() => toggle(market.id)}
-            disabled={disabled}
+            disabled={disabled || (atLimit && !selected.includes(market.id))}
             className={cn(
               "flex items-center gap-2 rounded-lg border px-3 py-2.5 text-sm transition-all duration-200 cursor-pointer",
               "hover:border-purple-500/50 hover:bg-purple-500/5",
@@ -63,9 +52,9 @@ export function MarketSelector({ selected, onChange, disabled }: MarketSelectorP
           </button>
         ))}
       </div>
-      {selected.length > 0 && (
-        <p className="text-xs text-muted-foreground">
-          {selected.length} market{selected.length > 1 ? "s" : ""} selected
+      {atLimit && (
+        <p className="text-xs text-amber-400/80">
+          Maximum of {MAX_MARKETS} markets reached — deselect one to change
         </p>
       )}
     </div>
