@@ -1,6 +1,6 @@
 "use client";
 
-import { markets, MarketProfile } from "@/lib/markets";
+import { markets } from "@/lib/markets";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
@@ -30,7 +30,7 @@ export function MarketSelector({ selected, onChange, disabled }: MarketSelectorP
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <label className="text-sm font-medium text-foreground">
+        <label className="text-xs font-medium uppercase tracking-[0.15em] text-purple-400">
           Target Markets
         </label>
         <Button
@@ -38,7 +38,7 @@ export function MarketSelector({ selected, onChange, disabled }: MarketSelectorP
           size="sm"
           onClick={selectAll}
           disabled={disabled}
-          className="text-xs text-muted-foreground"
+          className="text-xs text-muted-foreground hover:text-purple-400 cursor-pointer"
         >
           {selected.length === markets.length ? "Deselect all" : "Select all"}
         </Button>
@@ -50,12 +50,12 @@ export function MarketSelector({ selected, onChange, disabled }: MarketSelectorP
             onClick={() => toggle(market.id)}
             disabled={disabled}
             className={cn(
-              "flex items-center gap-2 rounded-lg border px-3 py-2.5 text-sm transition-all",
-              "hover:border-primary/50 hover:bg-primary/5",
+              "flex items-center gap-2 rounded-lg border px-3 py-2.5 text-sm transition-all duration-200 cursor-pointer",
+              "hover:border-purple-500/50 hover:bg-purple-500/5",
               "disabled:opacity-50 disabled:cursor-not-allowed",
               selected.includes(market.id)
-                ? "border-primary bg-primary/10 text-primary font-medium"
-                : "border-border text-muted-foreground"
+                ? "border-purple-500/60 bg-purple-500/10 text-purple-300 font-medium shadow-[0_0_15px_rgba(168,85,247,0.12)]"
+                : "border-white/10 text-muted-foreground bg-white/[0.02]"
             )}
           >
             <span className="text-lg">{market.flag}</span>

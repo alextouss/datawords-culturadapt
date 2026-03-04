@@ -34,7 +34,7 @@ export function PipelineStatus({ phase, completedCount, totalCount }: PipelineSt
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="flex items-center gap-2 py-4"
+      className="flex items-center gap-2 py-4 px-4 rounded-lg border border-white/10 bg-white/[0.02]"
     >
       {steps.map((step, idx) => {
         const isCompleted = idx < currentIdx || phase === "done";
@@ -45,27 +45,33 @@ export function PipelineStatus({ phase, completedCount, totalCount }: PipelineSt
             {idx > 0 && (
               <div
                 className={cn(
-                  "h-px w-6 sm:w-10",
-                  isCompleted ? "bg-primary" : "bg-border"
+                  "h-[2px] w-6 sm:w-12 rounded-full transition-all duration-500",
+                  isCompleted
+                    ? "animate-neon-flow"
+                    : isActive
+                      ? "bg-gradient-to-r from-purple-600 to-purple-400 animate-pulse"
+                      : "bg-white/10"
                 )}
               />
             )}
             <div className="flex items-center gap-1.5">
               {isCompleted ? (
-                <CheckCircle2 className="h-4 w-4 text-primary" />
+                <CheckCircle2 className="h-4 w-4 text-purple-400" />
               ) : isActive ? (
-                <Loader2 className="h-4 w-4 text-primary animate-spin" />
+                <div className="animate-pulse-glow rounded-full">
+                  <Loader2 className="h-4 w-4 text-purple-400 animate-spin" />
+                </div>
               ) : (
-                <Circle className="h-4 w-4 text-muted-foreground/40" />
+                <Circle className="h-4 w-4 text-white/20" />
               )}
               <span
                 className={cn(
                   "text-xs sm:text-sm",
                   isCompleted
-                    ? "text-primary font-medium"
+                    ? "text-purple-400 font-medium"
                     : isActive
                       ? "text-foreground font-medium"
-                      : "text-muted-foreground/60"
+                      : "text-white/30"
                 )}
               >
                 {step.label}
