@@ -10,7 +10,7 @@ export async function adaptForMarket(
   brandVoiceContext?: string
 ): Promise<AdaptationResult> {
   const { object } = await generateObject({
-    model: openai("gpt-4o-mini"),
+    model: openai("gpt-5.4-mini"),
     schema: adaptationResultSchema,
     system: buildAdaptationPrompt(market, brandVoiceContext),
     prompt: `Transcreate the following marketing content for the ${market.name} market:\n\n${sourceContent}`,
