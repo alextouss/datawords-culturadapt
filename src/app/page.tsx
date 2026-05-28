@@ -12,7 +12,7 @@ import { ResultCard } from "@/components/result-card";
 import { useAdaptation } from "@/hooks/use-adaptation";
 import { samples } from "@/lib/samples";
 import { Textarea } from "@/components/ui/textarea";
-import { Globe, Sparkles, RotateCcw, ArrowRight } from "lucide-react";
+import { Sparkles, RotateCcw, ArrowRight } from "lucide-react";
 
 export default function Home() {
   const [content, setContent] = useState(samples[0].content);
@@ -45,22 +45,15 @@ export default function Home() {
       {/* Header */}
       <header className="border-b border-border/50 bg-background/80 backdrop-blur-md sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-gradient-to-br from-purple-600 to-violet-500 text-white glow-purple-sm">
-              <Globe className="h-5 w-5" />
-            </div>
-            <div>
-              <h1 className="text-lg font-bold tracking-tight font-heading">
-                CulturAdapt
-              </h1>
-              <p className="text-xs text-muted-foreground">
-                AI-Powered Multicultural Transcreation
-              </p>
-            </div>
+          <div className="flex items-center gap-2.5">
+            <span
+              aria-hidden
+              className="h-2 w-2 rounded-full bg-purple-500 shadow-[0_0_8px_rgba(168,85,247,0.6)]"
+            />
+            <h1 className="text-base font-semibold tracking-tight font-heading">
+              CulturAdapt
+            </h1>
           </div>
-          <span className="text-xs text-muted-foreground hidden sm:block">
-            Datawords Study Case — Alexandre Toussaint
-          </span>
         </div>
       </header>
 
